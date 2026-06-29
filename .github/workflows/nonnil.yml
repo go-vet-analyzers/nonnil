@@ -1,0 +1,23 @@
+name: nonnil
+
+# Enforces the go-composites Null-Object invariant: never return/assign a bare
+# nil for an interface with IsNull() bool. See github.com/go-vet-analyzers/nonnil.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  nonnil:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          check-latest: true
+      - run: go install github.com/go-vet-analyzers/nonnil/cmd/nonnil@latest
+      - run: go vet -vettool="$(go env GOPATH)/bin/nonnil" ./...
